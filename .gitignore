@@ -9,6 +9,7 @@
 bin/
 build/
 target/
+.settings/
 tmp/
 dojo-release-1.10.4/
 ext-5.0.0.736/
