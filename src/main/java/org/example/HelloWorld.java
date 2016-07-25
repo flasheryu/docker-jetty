@@ -19,7 +19,10 @@ public class HelloWorld extends AbstractHandler
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
-        response.getWriter().println("<h1>Hello World, Jetty, automated build from github! Cool!!</h1>");
+        StringBuilder sb = new StringBuilder();
+        String res = sb.append("<h1>Hello World, Jetty, automated build from github! Cool!!</h1>")
+        		.append("<h1>New test for Jenkins and docker build!</h1>").toString();
+        response.getWriter().println(res);
     }
 
     public static void main(String[] args) throws Exception
