@@ -21,7 +21,7 @@ public class HelloWorld extends AbstractHandler
         baseRequest.setHandled(true);
         StringBuilder sb = new StringBuilder();
         String res = sb.append("<h1>Hello World, Jetty, automated build from github! Cool!!</h1>")
-        		.append("<h1>New test for Jenkins and docker build!</h1>").toString();
+        		.append("<h1>New test for Jenkins and docker build!</h1>").append("<h1>WOW!!</h1>").toString();
         response.getWriter().println(res);
     }
 
