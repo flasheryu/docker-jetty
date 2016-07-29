@@ -16,4 +16,6 @@ ADD pom.xml /code/pom.xml
 ADD src /code/src
 RUN ["mvn", "package"]
 
+EXPOSE 8080
+
 CMD ["java", "-jar", "target/hello-world-0.1-SNAPSHOT-jar-with-dependencies.jar"]
