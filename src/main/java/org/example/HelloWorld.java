@@ -5,8 +5,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
@@ -34,6 +37,7 @@ public class HelloWorld extends AbstractHandler
         		.append("<h1>Remote jmeter docker done!!! See the latest log in /log directory!!!</h1>")
         		.toString();
         
+        //3.0.0 is different from 3.0.1 by DockerClientConfig and DefaultDockerClientConfig types.
 		DockerClientConfig config = DockerClientConfig.createDefaultConfigBuilder()
 				.withDockerHost("tcp://42.62.101.83:2375")
                 .withRegistryUrl("https://index.docker.io/v1/").build();
@@ -58,8 +62,24 @@ public class HelloWorld extends AbstractHandler
     public static void main(String[] args) throws Exception
     {
         Server server = new Server(8080);
-        server.setHandler(new HelloWorld());
         
+        ContextHandler context = new ContextHandler("/");
+        context.setContextPath("/");
+        context.setHandler(new HelloHandler("Root Hello"));
+        
+        ContextHandler contextFR = new ContextHandler("/fr");
+        contextFR.setHandler(new HelloHandler("Bonjoir"));
+        
+        ContextHandler contextJmeter = new ContextHandler("/hijmeter");
+        contextJmeter.setHandler(new HelloWorld());
+
+//        server.setHandler(new HelloWorld());
+//        server.setHandler( context );
+
+        ContextHandlerCollection contexts = new ContextHandlerCollection();
+        contexts.setHandlers(new Handler[] { context, contextFR, contextJmeter});
+
+        server.setHandler(contexts);
 
         server.start();
         server.join();
