@@ -12,7 +12,7 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Volume;
-import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 
@@ -34,7 +34,7 @@ public class HelloWorld extends AbstractHandler
         		.append("<h1>Remote jmeter docker done!!! See the latest log in /log directory!!!</h1>")
         		.toString();
         
-		DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+		DockerClientConfig config = DockerClientConfig.createDefaultConfigBuilder()
 				.withDockerHost("tcp://42.62.101.83:2375")
                 .withRegistryUrl("https://index.docker.io/v1/").build();
 		DockerClient dockerClient = DockerClientBuilder.getInstance(config)
