@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.logging.Logger;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -30,6 +32,9 @@ public class HelloWorld extends AbstractHandler
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
+        
+		System.out.println("Running remote jmeter docker on host: 42.62.101.83...");
+
         StringBuilder sb = new StringBuilder();
         String res = sb.append("<h1>Hello World, Jetty, automated build from github! Cool!!</h1>")
         		.append("<h1>New test for Jenkins and docker build!</h1>").append("<h1>WOW!!</h1>").append("<h1>Integration DONE!!!</h1>")
