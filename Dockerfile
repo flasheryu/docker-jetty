@@ -4,6 +4,9 @@ FROM java:8
 RUN apt-get -y update
 RUN apt-get install -y maven
 
+RUN	mkdir -p ~/.m2/repository
+COPY .m2/repository/ ~/.m2/repository/
+
 WORKDIR /code
 
 # Prepare by downloading dependencies
