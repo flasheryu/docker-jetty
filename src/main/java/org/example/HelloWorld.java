@@ -33,8 +33,8 @@ public class HelloWorld extends AbstractHandler
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
         
-		System.out.println("Running remote jmeter docker on host: 42.62.101.83...");
-
+		Logger.getGlobal().info("Running remote jmeter docker on host: 42.62.101.83...");
+		
         StringBuilder sb = new StringBuilder();
         String res = sb.append("<h1>Hello World, Jetty, automated build from github! Cool!!</h1>")
         		.append("<h1>New test for Jenkins and docker build!</h1>").append("<h1>WOW!!</h1>").append("<h1>Integration DONE!!!</h1>")
@@ -61,6 +61,7 @@ public class HelloWorld extends AbstractHandler
 
 		dockerClient.startContainerCmd(container.getId()).exec();
 
+		Logger.getGlobal().info("Completed running remote jmeter docker on host: 42.62.101.83!");
 		response.getWriter().println(res);
     }
 
@@ -73,7 +74,10 @@ public class HelloWorld extends AbstractHandler
         context.setHandler(new HelloHandler("Root Hello"));
         
         ContextHandler contextFR = new ContextHandler("/fr");
-        contextFR.setHandler(new HelloHandler("Bonjoir"));
+        contextFR.setHandler(new HelloHandler("Bonjour"));
+        
+        ContextHandler contextDE = new ContextHandler("/de");
+        contextDE.setHandler(new HelloHandler("Gutten tag!"));
         
         ContextHandler contextJmeter = new ContextHandler("/hijmeter");
         contextJmeter.setHandler(new HelloWorld());
@@ -82,7 +86,7 @@ public class HelloWorld extends AbstractHandler
 //        server.setHandler( context );
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();
-        contexts.setHandlers(new Handler[] { context, contextFR, contextJmeter});
+        contexts.setHandlers(new Handler[] { context, contextFR, contextDE, contextJmeter});
 
         server.setHandler(contexts);
 
