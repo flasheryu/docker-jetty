@@ -44,7 +44,9 @@ public class HelloWorld extends AbstractHandler
         
         //3.0.0 is different from 3.0.1 by DockerClientConfig and DefaultDockerClientConfig types.
 		DockerClientConfig config = DockerClientConfig.createDefaultConfigBuilder()
-				.withDockerHost("tcp://42.62.101.83:2375")
+				.withDockerHost("tcp://42.62.101.83:2376")
+				.withDockerTlsVerify(true)
+				.withDockerCertPath("openssl")
                 .withRegistryUrl("https://index.docker.io/v1/").build();
 		DockerClient dockerClient = DockerClientBuilder.getInstance(config)
 		  .build();
