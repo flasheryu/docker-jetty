@@ -1,8 +1,8 @@
-FROM java:8
+FROM maven
 
 # Install maven
-RUN apt-get -y update
-RUN apt-get install -y maven
+#RUN apt-get -y update
+#RUN apt-get install -y maven
 
 RUN	mkdir -p /root/.m2/repository
 COPY repository/ /root/.m2/repository/
