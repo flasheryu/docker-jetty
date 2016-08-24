@@ -58,19 +58,21 @@ public class AsyncHelloWorld extends AbstractHandler
         ContextHandler contextDE = new ContextHandler("/de");
         contextDE.setHandler(new HelloHandler("Gutten tag!"));
         
-        ContextHandler contextJmeterAsync = new ContextHandler("/hijmeterasync");
-        contextJmeterAsync.setHandler(new AsyncHelloWorld());
+//        ContextHandler contextJmeterAsync = new ContextHandler("/hijmeterasync");
+//        contextJmeterAsync.setHandler(new AsyncHelloWorld());
         
         ContextHandler contextJmeterSync = new ContextHandler("/hijmetersync");
         contextJmeterSync.setHandler(new SyncHelloWorld());
 
         ServletContextHandler contextServlet = new ServletContextHandler(
                 ServletContextHandler.SESSIONS);
-        contextServlet.setContextPath("/resume");
+//      contextServlet.setContextPath("/resume");
+      contextServlet.setContextPath("/hijmeterasync");
         contextServlet.addServlet(SimpleSuspendResumeServlet.class, "/");
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();
-        contexts.setHandlers(new Handler[] { context, contextFR, contextDE, contextJmeterAsync, contextJmeterSync, contextServlet});
+//        contexts.setHandlers(new Handler[] { context, contextFR, contextDE, contextJmeterAsync, contextJmeterSync, contextServlet});
+        contexts.setHandlers(new Handler[] { context, contextFR, contextDE, contextJmeterSync, contextServlet});
         server.setHandler(contexts);
 
         server.start();
