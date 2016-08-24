@@ -18,6 +18,7 @@ import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.DockerClientConfig;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 
@@ -44,7 +45,7 @@ public class SyncHelloWorld extends AbstractHandler
 		response.getWriter().println("Running jmeter remotely!!");
 
 		 //3.0.0 is different from 3.0.1 by DockerClientConfig and DefaultDockerClientConfig types.
-		DockerClientConfig config = DockerClientConfig.createDefaultConfigBuilder()
+		DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
 				.withDockerHost("tcp://42.62.101.83:2376")
 				.withDockerTlsVerify(true)
 				.withDockerCertPath("openssl")
