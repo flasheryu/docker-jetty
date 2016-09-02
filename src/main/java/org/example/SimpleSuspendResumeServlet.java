@@ -127,9 +127,10 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
   }  
     
   private void sendMyFirstResponse(HttpServletResponse response) throws IOException {  
-      //必须加上这一行，否者flush也没用，为什么？  
+      //必须加上这一行，否则flush也没用，为什么？  
       response.setContentType("text/html");  
-      response.getWriter().write("start");  
+//      response.getWriter().write("starting...");  
+      response.getWriter().println("starting...");  
       response.getWriter().flush();  
 
   }  
@@ -137,7 +138,8 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
   private void sendMyResultResponse(HttpServletResponse response,  
           Object results) throws IOException {  
       //response.setContentType("text/html");  
-      response.getWriter().write("results:" + results);  
+//      response.getWriter().write("results:" + results);  
+      response.getWriter().println("results:" + results);  
       response.getWriter().flush();  
 
   }  
