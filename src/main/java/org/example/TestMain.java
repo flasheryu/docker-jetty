@@ -7,13 +7,15 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import util.Log4jConfig;
+import util.ResourceConfig;
 
 
 public class TestMain {
     public static void main(String[] args) throws Exception
     {
     	Log4jConfig.initialize();
-    	
+  	  	ResourceConfig.initialize();
+
         Server server = new Server(8080);
         
         ContextHandler context = new ContextHandler("/");

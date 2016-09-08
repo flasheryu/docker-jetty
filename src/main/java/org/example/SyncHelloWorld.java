@@ -4,7 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -15,6 +17,8 @@ import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.PullImageResultCallback;
+
+import util.ResourceConfig;
 
 public class SyncHelloWorld extends AbstractHandler
 {
@@ -28,7 +32,12 @@ public class SyncHelloWorld extends AbstractHandler
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
         
-		Logger.getGlobal().info("Running remote jmeter docker on host: 42.62.101.83...");
+        Properties systemProperties = ResourceConfig.getSystemProperty();
+        String host = systemProperties.getProperty("dockerhost");
+    	String certpath = systemProperties.getProperty("certpath");
+    	String testImage = systemProperties.getProperty("imagename");
+    	
+		Logger.getRootLogger().info("Running remote jmeter docker on host: "+host);
 		StringBuilder sb = new StringBuilder();
 
 	    String res = sb.append("<h1>Hello World, Jetty, automated build from github! Cool!!</h1>")
@@ -40,25 +49,25 @@ public class SyncHelloWorld extends AbstractHandler
 
 		 //3.0.0 is different from 3.0.1 by DockerClientConfig and DefaultDockerClientConfig types.
 		DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-				.withDockerHost("tcp://42.62.101.83:2376")
+				.withDockerHost(host)
 				.withDockerTlsVerify(true)
-				.withDockerCertPath("openssl")
-	            .withRegistryUrl("https://index.docker.io/v1/").build();
+				.withDockerCertPath(certpath)
+	            .withRegistryUrl("https://index.docker.io/v1/")
+	            .build();
 		DockerClient dockerClient = DockerClientBuilder.getInstance(config)
 		  .build();
 		
-		Volume volume1 = new Volume("/tmp"); 
+		Volume volume1 = new Volume("/log"); 
 		
-		String testImage = "flasheryu/jmeter";
 	    dockerClient.pullImageCmd(testImage).exec(new PullImageResultCallback()).awaitSuccess();
 	
 		CreateContainerResponse container = dockerClient.createContainerCmd(testImage)
 				.withVolumes(volume1)
-				.withBinds(new Bind("/log",volume1))
+				.withBinds(new Bind("/var/log",volume1))
 				   .exec();
 	
 		dockerClient.startContainerCmd(container.getId()).exec();
-		Logger.getGlobal().info("Completed running remote jmeter docker on host: 42.62.101.83!");
+		Logger.getRootLogger().info("Completed running remote jmeter docker on host: "+ host +"!");
 		response.getWriter().println(res);
     }
 }

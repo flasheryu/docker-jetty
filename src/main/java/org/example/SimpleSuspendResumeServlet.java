@@ -42,7 +42,6 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 
   public void init() throws ServletException {  
 
-	  ResourceConfig.initialize();
 	  systemProperties = ResourceConfig.getSystemProperty();
 	  
       myAsyncHandler = new MyAsyncHandler() {  
