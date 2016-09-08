@@ -62,7 +62,7 @@
 					<!-- MainClass in mainfest make a executable jar -->
 					<archive>
 					  <manifest>
-						<mainClass>org.example.AsyncHelloWorld</mainClass>
+						<mainClass>org.example.TestMain</mainClass>
 					  </manifest>
 					</archive>
 
@@ -89,7 +89,7 @@
           <goals><goal>java</goal></goals></execution>
         </executions>
         <configuration>
-          		<mainClass>org.example.AsyncHelloWorld</mainClass>
+          		<mainClass>org.example.TestMain</mainClass>
         </configuration>
       </plugin>
     </plugins>

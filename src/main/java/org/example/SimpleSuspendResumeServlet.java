@@ -19,7 +19,6 @@ import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
-import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.google.gson.Gson;
 
@@ -51,19 +50,12 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 //					        .withRegistryUrl("https://index.docker.io/v1/")
 					        .build();
 					
-//            		DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-//							.withDockerHost("tcp://42.62.73.223:2376")
-//							.withDockerTlsVerify(true)
-//							.withDockerCertPath("openssl")
-//					        .withRegistryUrl("https://index.docker.io/v1/").build();
-					
 					DockerClient dockerClient = DockerClientBuilder.getInstance(config)
 					  .build();
 					
 					Volume volume1 = new Volume("/log"); 
 					
 					String testImage = "flasheryu/jmeter";
-//					String testImage = "hello-world";
                     Logger.getGlobal().info("Starting pulling!");
 					dockerClient.pullImageCmd(testImage).exec(new PullImageResultCallback()).awaitSuccess();
              	
@@ -200,7 +192,6 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
   private void sendMyResultResponse(HttpServletResponse response,  
           Object results) throws IOException {  
       //response.setContentType("text/html");  
-//      response.getWriter().write("results:" + results);  
       response.getWriter().println("results:" + results);  
       response.getWriter().flush();  
 

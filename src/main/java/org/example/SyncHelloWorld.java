@@ -5,19 +5,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.logging.Logger;
-
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Volume;
-import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.PullImageResultCallback;
@@ -66,34 +60,5 @@ public class SyncHelloWorld extends AbstractHandler
 		dockerClient.startContainerCmd(container.getId()).exec();
 		Logger.getGlobal().info("Completed running remote jmeter docker on host: 42.62.101.83!");
 		response.getWriter().println(res);
-    }
-
-    public static void main(String[] args) throws Exception
-    {
-        Server server = new Server(8080);
-        
-        ContextHandler context = new ContextHandler("/");
-        context.setContextPath("/");
-        context.setHandler(new HelloHandler("Root Hello"));
-        
-        ContextHandler contextFR = new ContextHandler("/fr");
-        contextFR.setHandler(new HelloHandler("Bonjour"));
-        
-        ContextHandler contextDE = new ContextHandler("/de");
-        contextDE.setHandler(new HelloHandler("Gutten tag!"));
-        
-        ContextHandler contextJmeter = new ContextHandler("/hijmeter");
-        contextJmeter.setHandler(new SyncHelloWorld());
-
-//        server.setHandler(new HelloWorld());
-//        server.setHandler( context );
-
-        ContextHandlerCollection contexts = new ContextHandlerCollection();
-        contexts.setHandlers(new Handler[] { context, contextFR, contextDE, contextJmeter});
-
-        server.setHandler(contexts);
-
-        server.start();
-        server.join();
     }
 }
