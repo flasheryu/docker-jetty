@@ -1,7 +1,10 @@
 package org.example;
 
 import java.io.BufferedReader;
-import java.io.IOException;  
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
 //import java.io.PrintWriter;
 import java.util.logging.Logger;
 
@@ -22,7 +25,7 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.google.gson.Gson;
 
-import Model.LoadCase;  
+import Model.LoadCaseInfo;  
 
 public class SimpleSuspendResumeServlet extends HttpServlet {  
 
@@ -33,18 +36,31 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 
   private MyAsyncHandler myAsyncHandler;  
 
-  private String param = null;  
+  private String param = null; 
+  
+  private InputStream dockerhost = SimpleSuspendResumeServlet.class.getResourceAsStream("/resource.properties");
+  private BufferedReader bf = new BufferedReader(new InputStreamReader(dockerhost));
+  private static Properties systemProperties = new Properties();;
 
   public void init() throws ServletException {  
 
+	  try {
+		systemProperties.load(bf);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  
       myAsyncHandler = new MyAsyncHandler() {  
           public void register(final MyHandler myHandler) {  
               new Thread(new Runnable() {  
                   public void run() {  
-                    Logger.getGlobal().info("Running remote jmeter docker on host: 112.124.112.4...");
+                	String host = systemProperties.getProperty("dockerhost");
+                    Logger.getGlobal().info("Running remote jmeter docker on host: "+host);
+                    
 					 //3.0.0 is different from 3.0.1 by DockerClientConfig and DefaultDockerClientConfig types.
             		DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-							.withDockerHost("tcp://112.124.112.4:2376")
+							.withDockerHost(host)
 							.withDockerTlsVerify(true)
 							.withDockerCertPath("openssl")
 //					        .withRegistryUrl("https://index.docker.io/v1/")
@@ -69,7 +85,7 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
                     Logger.getGlobal().info("Create DONE! Starting executing!");
                     Logger.getGlobal().info("Container Id is "+container.getId());
 					dockerClient.startContainerCmd(container.getId()).exec();
-					Logger.getGlobal().info("Completed running remote jmeter docker on host: 112.124.112.4!");
+					Logger.getGlobal().info("Completed running remote jmeter docker on host: "+host+"!");
 					myHandler.onMyEvent("complete!");  
                   }  
               }).start();  
@@ -134,7 +150,7 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
       }  
       String info = stringBuffer.toString();  
       Gson gson = new Gson();  
-      LoadCase loadcase = gson.fromJson(info, LoadCase.class);  
+      LoadCaseInfo loadcase = gson.fromJson(info, LoadCaseInfo.class);  
       param = loadcase.getLoadname();
       Logger.getGlobal().info("Param is "+param);
 

@@ -1,6 +1,6 @@
 package Model;
 
-public class LoadCase {
+public class LoadCaseInfo {
 
 	String loadname;
 	
