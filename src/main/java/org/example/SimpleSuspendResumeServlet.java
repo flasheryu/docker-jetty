@@ -24,7 +24,8 @@ import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.google.gson.Gson;
 
 import model.LoadCaseInfo;
-import util.ResourceConfig;  
+import util.ResourceConfig;
+import util.Tools;  
 
 public class SimpleSuspendResumeServlet extends HttpServlet {  
 
@@ -64,15 +65,15 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 					DockerClient dockerClient = DockerClientBuilder.getInstance(config)
 					  .build();
 					
-					Volume volume1 = new Volume("/log"); 
+					Volume volume = new Volume("/log"); 
 					
                     Logger.getRootLogger().info("Starting pulling!");
 					dockerClient.pullImageCmd(testImage).exec(new PullImageResultCallback()).awaitSuccess();
              	
                     Logger.getRootLogger().info("Starting creating!");
 					CreateContainerResponse container = dockerClient.createContainerCmd(testImage)
-							.withVolumes(volume1)
-							.withBinds(new Bind("/var/log",volume1))
+							.withVolumes(volume)
+							.withBinds(new Bind("/var/log", volume))
 							.withCmd("/runload.sh", param)
 							.exec();
 					
@@ -107,7 +108,6 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
           myAsyncHandler.register(new MyHandler() {  
               public void onMyEvent(Object result) {  
                   continuation.setAttribute("results", result);  
-                    
                   continuation.resume();  
               }  
           });  
@@ -118,7 +118,8 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
           sendMyTimeoutResponse(response);  
           return;  
       }  
-       //Send the results  
+      
+      //Send the results  
       Object results = request.getAttribute("results");  
       if(results==null){  
           response.getWriter().write("why reach here??");  
@@ -130,10 +131,8 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)  
           throws ServletException, IOException {  
-      // if we need to get asynchronous results  
-      //Object results = request.getAttribute("results");  
-//      final PrintWriter writer = response.getWriter();  
-      final Continuation continuation = ContinuationSupport.getContinuation(request);  
+
+	  final Continuation continuation = ContinuationSupport.getContinuation(request);  
 
       BufferedReader br =request.getReader();
       
@@ -191,18 +190,13 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
   }  
     
   private void sendMyFirstResponse(HttpServletResponse response) throws IOException {  
-      response.setContentType("text/html");  
-      response.getWriter().println("starting...");  
-      response.getWriter().flush();  
-
+	  String result = "starting...";
+	  Tools.print(response, result);
   }  
 
   private void sendMyResultResponse(HttpServletResponse response,  
           Object results) throws IOException {  
-      //response.setContentType("text/html");  
-      response.getWriter().println("results:" + results);  
-      response.getWriter().flush();  
-
+	  Tools.printToJson(results.toString(), response);
   }  
 
   private void sendMyTimeoutResponse(HttpServletResponse response)  
