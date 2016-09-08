@@ -2,17 +2,15 @@ package org.example;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Properties;
 //import java.io.PrintWriter;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;  
 import javax.servlet.http.HttpServlet;  
 import javax.servlet.http.HttpServletRequest;  
-import javax.servlet.http.HttpServletResponse;  
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.continuation.Continuation;  
 import org.eclipse.jetty.continuation.ContinuationSupport;
 
@@ -25,7 +23,8 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.google.gson.Gson;
 
-import Model.LoadCaseInfo;  
+import model.LoadCaseInfo;
+import util.ResourceConfig;  
 
 public class SimpleSuspendResumeServlet extends HttpServlet {  
 
@@ -38,25 +37,19 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 
   private String param = null; 
   
-  private InputStream dockerhost = SimpleSuspendResumeServlet.class.getResourceAsStream("/resource.properties");
-  private BufferedReader bf = new BufferedReader(new InputStreamReader(dockerhost));
-  private static Properties systemProperties = new Properties();;
+  private static Properties systemProperties = new Properties();
 
   public void init() throws ServletException {  
 
-	  try {
-		systemProperties.load(bf);
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	  ResourceConfig.initialize();
+	  systemProperties = ResourceConfig.getSystemProperty();
 	  
       myAsyncHandler = new MyAsyncHandler() {  
           public void register(final MyHandler myHandler) {  
               new Thread(new Runnable() {  
                   public void run() {  
                 	String host = systemProperties.getProperty("dockerhost");
-                    Logger.getGlobal().info("Running remote jmeter docker on host: "+host);
+                    Logger.getRootLogger().info("Running remote jmeter docker on host: "+host);
                     
 					 //3.0.0 is different from 3.0.1 by DockerClientConfig and DefaultDockerClientConfig types.
             		DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
@@ -72,20 +65,20 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 					Volume volume1 = new Volume("/log"); 
 					
 					String testImage = "flasheryu/jmeter";
-                    Logger.getGlobal().info("Starting pulling!");
+                    Logger.getRootLogger().info("Starting pulling!");
 					dockerClient.pullImageCmd(testImage).exec(new PullImageResultCallback()).awaitSuccess();
              	
-                    Logger.getGlobal().info("Starting creating!");
+                    Logger.getRootLogger().info("Starting creating!");
 					CreateContainerResponse container = dockerClient.createContainerCmd(testImage)
 							.withVolumes(volume1)
 							.withBinds(new Bind("/var/log",volume1))
 							.withCmd("/runload.sh", param)
 							.exec();
 					
-                    Logger.getGlobal().info("Create DONE! Starting executing!");
-                    Logger.getGlobal().info("Container Id is "+container.getId());
+                    Logger.getRootLogger().info("Create DONE! Starting executing!");
+                    Logger.getRootLogger().info("Container Id is "+container.getId());
 					dockerClient.startContainerCmd(container.getId()).exec();
-					Logger.getGlobal().info("Completed running remote jmeter docker on host: "+host+"!");
+					Logger.getRootLogger().info("Completed running remote jmeter docker on host: "+host+"!");
 					myHandler.onMyEvent("complete!");  
                   }  
               }).start();  
@@ -99,7 +92,7 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 
 	  final Continuation continuation = ContinuationSupport.getContinuation(request);  
       param = "hello-baidu";
-      Logger.getGlobal().info("Param is "+param);
+      Logger.getRootLogger().info("Param is "+param);
 	  
       if (continuation.isInitial()) {  
             
@@ -152,7 +145,7 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
       Gson gson = new Gson();  
       LoadCaseInfo loadcase = gson.fromJson(info, LoadCaseInfo.class);  
       param = loadcase.getLoadname();
-      Logger.getGlobal().info("Param is "+param);
+      Logger.getRootLogger().info("Param is "+param);
 
       //if (results == null) {  
       if (continuation.isInitial()) {  
