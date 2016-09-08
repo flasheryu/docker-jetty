@@ -48,14 +48,16 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
           public void register(final MyHandler myHandler) {  
               new Thread(new Runnable() {  
                   public void run() {  
-                	String host = systemProperties.getProperty("dockerhost");
+                  	String host = systemProperties.getProperty("dockerhost");
                     Logger.getRootLogger().info("Running remote jmeter docker on host: "+host);
+                	String certpath = systemProperties.getProperty("certpath");
+                	String testImage = systemProperties.getProperty("imagename");
                     
 					 //3.0.0 is different from 3.0.1 by DockerClientConfig and DefaultDockerClientConfig types.
             		DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
 							.withDockerHost(host)
 							.withDockerTlsVerify(true)
-							.withDockerCertPath("openssl")
+							.withDockerCertPath(certpath)
 //					        .withRegistryUrl("https://index.docker.io/v1/")
 					        .build();
 					
@@ -64,7 +66,6 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 					
 					Volume volume1 = new Volume("/log"); 
 					
-					String testImage = "flasheryu/jmeter";
                     Logger.getRootLogger().info("Starting pulling!");
 					dockerClient.pullImageCmd(testImage).exec(new PullImageResultCallback()).awaitSuccess();
              	
@@ -190,9 +191,7 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
   }  
     
   private void sendMyFirstResponse(HttpServletResponse response) throws IOException {  
-      //���������һ�У�����flushҲû�ã�Ϊʲô��  
       response.setContentType("text/html");  
-//      response.getWriter().write("starting...");  
       response.getWriter().println("starting...");  
       response.getWriter().flush();  
 
