@@ -73,8 +73,8 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
 					
 					Volume volume = new Volume("/log"); 
 					
-                    Logger.getRootLogger().info("Starting pulling!");
-					dockerClient.pullImageCmd(testImage).exec(new PullImageResultCallback()).awaitSuccess();
+//                    Logger.getRootLogger().info("Starting pulling!");
+//					dockerClient.pullImageCmd(testImage).exec(new PullImageResultCallback()).awaitSuccess();
              	
                     Logger.getRootLogger().info("Starting creating!");
 					CreateContainerResponse container = dockerClient.createContainerCmd(testImage)
