@@ -50,17 +50,24 @@ public class SimpleSuspendResumeServlet extends HttpServlet {
                   public void run() {  
                   	String host = systemProperties.getProperty("dockerhost");
                     Logger.getRootLogger().info("Running remote jmeter docker on host: "+host);
-                	String certpath = systemProperties.getProperty("certpath");
+//                	String certpath = systemProperties.getProperty("certpath");
                 	String testImage = systemProperties.getProperty("imagename");
                     
 					 //3.0.0 is different from 3.0.1 by DockerClientConfig and DefaultDockerClientConfig types.
+//            		DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+//							.withDockerHost(host)
+//							.withDockerTlsVerify(true)
+//							.withDockerCertPath(certpath)
+////					        .withRegistryUrl("https://index.docker.io/v1/")
+//					        .build();
+
+                	//within intranet, donot need to use openssl(there is a "TLS handshake error" bug to be resolved in /var/log/messages)
             		DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
 							.withDockerHost(host)
-							.withDockerTlsVerify(true)
-							.withDockerCertPath(certpath)
+							.withDockerTlsVerify(false)
 //					        .withRegistryUrl("https://index.docker.io/v1/")
 					        .build();
-					
+
 					DockerClient dockerClient = DockerClientBuilder.getInstance(config)
 					  .build();
 					
